@@ -19,6 +19,42 @@ app.get("/", (req, res) => {
     return res.sendFile("index.html");
 })
 
+let arr = [];
+let playingArr = [];
+
+io.on("connection", (socket)=>{
+    console.log("New user connected");
+
+    //receiving the name from client.
+    socket.on("find", (e)=>{
+        if(e.name!==null){
+            arr.push(e.name);
+            if(arr.length >= 2){
+                let p1obj = {
+                    p1name : arr[0],
+                    p1value : "X",
+                    p1move : ""
+                }
+                let p2obj = {
+                    p2name : arr[1],
+                    p2value : "O",
+                    p2move : ""
+                }
+                let obj = {
+                    p1 : p1obj,
+                    p2 : p2obj
+                }
+                playingArr.push(obj);
+
+                arr.length = 0;
+
+                //sending the find data of players to client
+                io.emit("find", {allPlayers : playingArr})
+            }
+        }
+    })
+})
+
 // Starting the server and listening on port 3000
 server.listen(3000, ()=>{
     console.log("Port connected!")
