@@ -56,3 +56,42 @@ socket.on("find", (e) => {
 
 })
 
+// Get all the buttons with class "btn"
+const buttons = document.querySelectorAll('.btn');
+
+// Loop through each button and attach an event listener
+buttons.forEach((e) => {
+  e.addEventListener('click', function(){
+    let value = document.getElementById("value").innerText;
+    e.innerText = value;
+    socket.emit("play", {value : value, name : name, id : e.id});
+  });
+});
+
+socket.on("play", (e)=>{
+    const foundObject = (e.allPlayers).find(obj => obj.p1.p1name == `${name}` || obj.p2.p2name == `${name}`);
+    p1id = foundObject.p1.p1move
+    p2id = foundObject.p2.p2move
+
+    if ((foundObject.sum) % 2 == 0) {
+        document.getElementById("whosTurn").innerText = "O's Turn"
+    }
+    else {
+        document.getElementById("whosTurn").innerText = "X's Turn"
+    }
+
+    if (p1id != '') {
+        document.getElementById(`${p1id}`).innerText = "X"
+        document.getElementById(`${p1id}`).disabled = true
+        document.getElementById(`${p1id}`).style.color = "black"
+    }
+    if (p2id != '') {
+        document.getElementById(`${p2id}`).innerText = "O"
+        document.getElementById(`${p2id}`).disabled = true
+        document.getElementById(`${p2id}`).style.color = "black"
+    }
+
+
+})
+
+
